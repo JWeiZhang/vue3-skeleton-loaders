@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import VSkeletonLoader from './components';
+
+const isLoaded = ref(false);
+const loaded = () => {
+  isLoaded.value = true;
+};
 </script>
 
 <template>
-  <VSkeletonLoader style="width: 100px" type="paragraph">
-    <img src="https://teachersummer.surge.sh/img/me.aa46abd5.jpg" alt="" />
-  </VSkeletonLoader>
+  <div style="width: 300px">
+    <VSkeletonLoader v-show="!isLoaded" type="avatar, paragraph"> </VSkeletonLoader>
+  </div>
 </template>
 
 <style>

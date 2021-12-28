@@ -1,49 +1,34 @@
 <template>
   <div>
-    <div v-show="!isLoaded" class="preload">
-      <div v-for="element in preloadSetting.count" :key="`element_${element}`" :class="preloadSetting.type" />
+    <div class="preload">
+      <div v-for="element in preloadElements" :key="`element_${element}`" :class="element" />
     </div>
-    <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, useSlots, computed, App } from 'vue';
+import { computed } from 'vue';
 
-const { default: slots } = useSlots();
 const { type } = defineProps({
   type: String,
 });
 
-const preloadSetting = computed(() => {
-  const setting = { type, count: 1 };
-  if (type === 'sentences') {
-    setting.count = 2;
-    setting.type = 'text';
-  } else if (type === 'paragraph') {
-    setting.count = 3;
-    setting.type = 'text';
-  }
+const preloadElements = computed(() =>
+  type?.split(',').reduce((acc, item) => {
+    const currentType = item.trim();
 
-  return setting;
-});
+    let result = [...acc];
+    if (currentType === 'sentences') {
+      result = [...result, 'text', 'text'];
+    } else if (currentType === 'paragraph') {
+      result = [...result, 'text', 'text', 'text'];
+    } else {
+      result = [...result, currentType];
+    }
 
-const isLoaded = ref(false);
-
-const loaded = () => {
-  isLoaded.value = true;
-};
-
-if (slots) {
-  const slotsElements = slots();
-  if (slotsElements) {
-    slotsElements.forEach((item) => {
-      if (item && item.props) {
-        item.props.onLoad = loaded;
-      }
-    });
-  }
-}
+    return result;
+  }, [] as string[]),
+);
 </script>
 
 <style lang="scss" scoped>
